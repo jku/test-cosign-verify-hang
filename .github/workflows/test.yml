@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: sigstore/cosign-installer@v3.5.0
 
-      - name: test verify-attestation with skipped payload print
+      - name: Verify attestation
         run: |
           COSIGN_REPOSITORY=ghcr.io/ckotzbauer/sbom-operator-metadata cosign \
             verify-attestation ghcr.io/ckotzbauer/sbom-operator@sha256:8261989ef9c08f07da0980e8d70d81d17e875c1a69b2281a4ff74a4a4026b9e1 \
