@@ -10,15 +10,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: sigstore/cosign
-          ref: "v2.2.4"
+          repository: jku/cosign
 
       - uses: actions/setup-go@v5
         with:
           version: '1.21'
 
-      - name: build
-        run: make
+      - name: build with a bit of debug output
+        run: |
+          git checkout 6de7982be
+          make
 
       - name: test verify-attestation
         run: |
@@ -32,12 +33,12 @@ jobs:
             --certificate-github-workflow-repository ckotzbauer/sbom-operator \
             --certificate-github-workflow-ref refs/heads/main
 
-      - name: build without PrintVerification
+      - name: build without sig.payload()
         run: |
-          sed -i "s#PrintVerification(#// PrintVerification(#" cmd/cosign/cli/verify/verify_attestation.go
+          git checkout 1dd72396
           make
 
-      - name: test verify-attestation without PrintVerification
+      - name: test verify-attestation without sig.payload
         run: |
           COSIGN_REPOSITORY=ghcr.io/ckotzbauer/sbom-operator-metadata ./cosign \
             verify-attestation ghcr.io/ckotzbauer/sbom-operator@sha256:8261989ef9c08f07da0980e8d70d81d17e875c1a69b2281a4ff74a4a4026b9e1 \
