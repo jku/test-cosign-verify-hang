@@ -1,0 +1,34 @@
+name: test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: sigstore/cosign
+          ref: "v2.2.4"
+
+      - uses: actions/setup-go@v5
+        with:
+          version: '1.21'
+
+      - name: build
+        run: make
+
+      # Runs a set of commands using the runners shell
+      - name: test verify-attestation
+        run: |
+          COSIGN_REPOSITORY=ghcr.io/ckotzbauer/sbom-operator-metadata ./cosign \ 
+            verify-attestation ghcr.io/ckotzbauer/sbom-operator@sha256:8261989ef9c08f07da0980e8d70d81d17e875c1a69b2281a4ff74a4a4026b9e1 \
+            --certificate-identity-regexp "https:\/\/github\.com\/ckotzbauer\/actions-toolkit\/\.github\/workflows\/toolkit-release-.*"  \
+            --type spdx \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --certificate-github-workflow-trigger workflow_dispatch \
+            --certificate-github-workflow-name create-release \
+            --certificate-github-workflow-repository ckotzbauer/sbom-operator \
+            --certificate-github-workflow-ref refs/heads/main
