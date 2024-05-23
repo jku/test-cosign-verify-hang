@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: jku/cosign
+          ref: wip-debug
 
       - uses: actions/setup-go@v5
         with:
