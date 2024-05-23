@@ -20,7 +20,6 @@ jobs:
       - name: build
         run: make
 
-      # Runs a set of commands using the runners shell
       - name: test verify-attestation
         run: |
           COSIGN_REPOSITORY=ghcr.io/ckotzbauer/sbom-operator-metadata ./cosign \
@@ -32,3 +31,21 @@ jobs:
             --certificate-github-workflow-name create-release \
             --certificate-github-workflow-repository ckotzbauer/sbom-operator \
             --certificate-github-workflow-ref refs/heads/main
+
+      - name: build without PrintVerification
+        run: |
+          sed -i "s#PrintVerification(#// PrintVerification(#" cmd/cosign/cli/verify/verify_attestation.go
+          make
+
+      - name: test verify-attestation without PrintVerification
+        run: |
+          COSIGN_REPOSITORY=ghcr.io/ckotzbauer/sbom-operator-metadata ./cosign \
+            verify-attestation ghcr.io/ckotzbauer/sbom-operator@sha256:8261989ef9c08f07da0980e8d70d81d17e875c1a69b2281a4ff74a4a4026b9e1 \
+            --certificate-identity-regexp "https:\/\/github\.com\/ckotzbauer\/actions-toolkit\/\.github\/workflows\/toolkit-release-.*"  \
+            --type spdx \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            --certificate-github-workflow-trigger workflow_dispatch \
+            --certificate-github-workflow-name create-release \
+            --certificate-github-workflow-repository ckotzbauer/sbom-operator \
+            --certificate-github-workflow-ref refs/heads/main
+
