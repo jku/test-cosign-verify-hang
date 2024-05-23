@@ -18,12 +18,12 @@ jobs:
         with:
           version: '1.21'
 
-      - name: build with moar debug output
+      - name: build 
         run: |
-          git checkout 867c2331e2
+          git checkout 78eab385
           make
 
-      - name: test verify-attestation with more debug output
+      - name: test verify-attestation with skipped payload print
         run: |
           COSIGN_REPOSITORY=ghcr.io/ckotzbauer/sbom-operator-metadata ./cosign \
             verify-attestation ghcr.io/ckotzbauer/sbom-operator@sha256:8261989ef9c08f07da0980e8d70d81d17e875c1a69b2281a4ff74a4a4026b9e1 \
