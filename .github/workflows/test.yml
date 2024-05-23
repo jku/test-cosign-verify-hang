@@ -20,7 +20,7 @@ jobs:
 
       - name: build 
         run: |
-          git checkout 78eab385
+          git checkout 3c55f98a
           make
 
       - name: test verify-attestation with skipped payload print
